@@ -1,0 +1,21 @@
+---
+title: "p8105_hw6_wp2241_lg2973"
+author: "Weixin Peng & Lu Gan"
+date: "November 14, 2017"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(ggplot2)
+```
+
+```{r}
+nynoaadat = read_csv("../data/nynoaadat.csv") %>%
+  clean_names() %>%
+  na.omit 
+
+```
+
+
