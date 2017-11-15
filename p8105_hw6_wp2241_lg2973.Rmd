@@ -63,10 +63,13 @@ data_nynoaa %>%
   layout(yaxis = list(title = 'mean tmin(tmax)'))
 ```
 
-### Chart C
+### The number of days with tmax>100 in each month of observations from USC00300085
 
 ```{r}
-
+data_nynoaa %>% 
+  filter(tmax > 100) %>% 
+  count(month) %>% 
+  plot_ly(x = ~month, y = ~n, color = ~month, type = "bar") 
 ```
 
 
