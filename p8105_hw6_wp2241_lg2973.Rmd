@@ -1,8 +1,12 @@
 ---
-title: "p8105_hw6_wp2241_lg2973"
+title: "Problem 1"
 author: "Weixin Peng & Lu Gan"
 date: "November 14, 2017"
-output: html_document
+output: 
+    flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+
 ---
 
 ```{r}
@@ -15,24 +19,10 @@ library(viridis)
 library(plotly)
 library(flexdashboard)
 ```
-Cleaning dataset
 ```{r}
-nynoaadat = read_csv("../data/nynoaadat.csv") %>%
+data_nynoaa = read_csv("./data/nynoaadat.csv") %>%
   clean_names() %>%
-  na.omit 
-
-```
-```{r setup, include=FALSE}
-library(flexdashboard)
-```
-Flexdashboard
-Column {data-width=650}
------------------------------------------------------------------------
-
-### Chart A
-
-```{r}
-  nynoaadat %>%
+  filter(id == "USC00300085") %>%
   mutate(ymd = date) %>%
   separate(ymd, into = c("year", "month", "day"), sep = "-") %>%
   mutate(
@@ -43,37 +33,34 @@ Column {data-width=650}
     tmin = as.integer(tmin)
          ) %>%
   select(id, year, month, tmax, tmin) %>%
-  na.omit %>%
-  group_by(month) %>%
+  na.omit 
+  
+```
+Column {data-width=650}
+-----------------------------------------------------------------------
 
-plot_ly(y = ~tmax, x = ~month, color = ~month, type = "box",
+### The distribution of tmax in each month of observations from USC00300085
+
+```{r}
+  data_nynoaa %>%
+  group_by(month) %>%
+  plot_ly(y = ~tmax, x = ~month, color = ~month, type = "box",
           colors = "Set2")
 ```
 
 Column {data-width=350}
 -----------------------------------------------------------------------
 
-### Chart B
+### The scatter plot of mean tmax and tmin in each month of observations from USC00300085
 
 ```{r}
-nynoaadat %>%
-mutate(ymd = date) %>%
-separate(ymd, into = c("year", "month", "day"), sep = "-") %>%
-mutate(
-    year = as.integer(year),
-    month = as.integer(month),     
-    day = as.integer(day),
-    tmax = as.integer(tmax),
-    tmin = as.integer(tmin)
-         ) %>%
-select(month, tmax, tmin) %>%
-na.omit %>%
-group_by(month) %>%
-mutate(mean_tmax_month = mean(tmax, na.rm = TRUE),
-       mean_tmin_month = mean(tmin, na.rm = TRUE)) %>%
-plot_ly( x = ~month, y = ~mean_tmax_month, name = 'mean tmax', type = 'scatter', mode = 'lines') %>%
-  add_trace(y = ~mean_tmin_month, name = 'mean tmin', mode = 'lines+markers') 
- 
+data_nynoaa %>%
+  group_by(month) %>%
+  mutate(mean_tmax_month = mean(tmax, na.rm = TRUE),
+         mean_tmin_month = mean(tmin, na.rm = TRUE)) %>%
+  plot_ly( x = ~month, y = ~mean_tmax_month, name = 'mean tmax', type = 'scatter', mode = 'markers') %>%
+  add_trace(y = ~mean_tmin_month, name = 'mean tmin', mode = 'markers') %>% 
+  layout(yaxis = list(title = 'mean tmin(tmax)'))
 ```
 
 ### Chart C
